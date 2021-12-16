@@ -1,8 +1,10 @@
 using Photon.Pun;
 using Photon.Realtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MyScripts.Core
 {
@@ -10,6 +12,8 @@ namespace MyScripts.Core
     {
         public static GameManager instance;
         string gameVersion = "1";
+        public GameObject localPlayer;
+
         void Awake()
         {
             if (instance != null)
@@ -28,7 +32,18 @@ namespace MyScripts.Core
         {
             PhotonNetwork.ConnectUsingSettings();
             PhotonNetwork.GameVersion = gameVersion;
+            SceneManager.sceneLoaded += OnSceneLoad;
         }
+
+        private void OnSceneLoad(Scene scene, LoadSceneMode mode)
+        {
+            if (!PhotonNetwork.InRoom)
+            {
+                return;
+            }
+            localPlayer = PhotonNetwork.Instantiate("Tankplayer", new Vector3(0, 0, 0), Quaternion.identity, 0);
+        }
+
         public override void OnConnected()
         {
             Debug.Log("PUN Connected");
@@ -53,7 +68,15 @@ namespace MyScripts.Core
 
         public override void OnJoinedRoom()
         {
-            print("Join Room!");
+            if (PhotonNetwork.IsMasterClient)
+            {
+                print("Create room.");
+                PhotonNetwork.LoadLevel("GameScene");
+            }
+            else
+            {
+                print("Join Room!");
+            }
         }
     }
 }
