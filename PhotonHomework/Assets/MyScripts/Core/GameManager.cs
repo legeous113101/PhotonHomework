@@ -1,6 +1,8 @@
 using Photon.Pun;
 using Photon.Realtime;
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Tanks
 {
@@ -9,6 +11,8 @@ namespace Tanks
         public static GameManager instance;
 
         string gameVersion = "1";
+
+        public static GameObject localPlayer;
 
         void Awake()
         {
@@ -28,6 +32,14 @@ namespace Tanks
         {
             PhotonNetwork.ConnectUsingSettings();
             PhotonNetwork.GameVersion = gameVersion;
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (!PhotonNetwork.InRoom) return;
+            localPlayer = PhotonNetwork.Instantiate("Tankplayer", Vector3.zero, Quaternion.identity, 0);
         }
 
         public override void OnConnected()
