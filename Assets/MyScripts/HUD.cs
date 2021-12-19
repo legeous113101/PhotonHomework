@@ -8,10 +8,12 @@ namespace Tanks
     public class HUD : MonoBehaviourPunCallbacks
     {
         static HUD instance;
+
         [SerializeField]
-        Button startButton;
+        private Button startButton;
+
         [SerializeField]
-        GameObject UI;
+        private GameObject UI;
         void Awake()
         {
             if (instance != null)
@@ -19,6 +21,7 @@ namespace Tanks
                 DestroyImmediate(gameObject);
                 return;
             }
+
 
             instance = this;
             DontDestroyOnLoad(gameObject);

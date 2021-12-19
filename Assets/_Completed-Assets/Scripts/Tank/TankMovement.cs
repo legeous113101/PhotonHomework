@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using Photon.Pun;
+using Tanks;
+using UnityEngine;
 
 namespace Complete
 {
-    public class TankMovement : MonoBehaviour
+    public class TankMovement : MonoBehaviourPunCallbacks
     {
         public int m_PlayerNumber = 1;              // Used to identify which tank belongs to which player.  This is set by this tank's manager.
         public float m_Speed = 12f;                 // How fast the tank moves forward and back.
@@ -20,9 +22,13 @@ namespace Complete
         private float m_OriginalPitch;              // The pitch of the audio source at the start of the scene.
         private ParticleSystem[] m_particleSystems; // References to all the particles systems used by the Tanks
 
+        private Transform turrent;
+        private float turrentTurnValue;
+
         private void Awake ()
         {
             m_Rigidbody = GetComponent<Rigidbody> ();
+            turrent = gameObject.transform.FindAnyChild<Transform>("TankTurret");
         }
 
 
@@ -76,9 +82,25 @@ namespace Complete
             m_MovementInputValue = Input.GetAxis ("Vertical");
             m_TurnInputValue = Input.GetAxis ("Horizontal");
 
+            turrentTurnValue = Input.GetAxis("Horizontal2");
+
             EngineAudio ();
         }
 
+
+        private void TurnTurrent()
+        {
+            if (turrent == null) return;
+            var newRot = new Vector3(0f, turrentTurnValue, 0f);
+            turrent.Rotate(newRot);
+            photonView.RPC("RotateOtherTurrent", RpcTarget.Others,newRot);
+        }
+
+        [PunRPC]
+        void RotateOtherTurrent(Vector3 rotation)
+        {
+            turrent.Rotate(rotation);
+        }
 
         private void EngineAudio ()
         {
@@ -113,7 +135,10 @@ namespace Complete
             // Adjust the rigidbodies position and orientation in FixedUpdate.
             Move ();
             Turn ();
+            TurnTurrent();
         }
+
+
 
 
         private void Move ()

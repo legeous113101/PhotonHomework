@@ -109,9 +109,12 @@ namespace Tanks
         private Transform GetRandomSpawnPoint()
         {
             var spawnPoints = GetAllObjectsOfTypeInScene<SpawnPoint>();
-            return spawnPoints.Count == 0
+            var rt = spawnPoints.Count == 0
               ? defaultSpawnPoint.transform
               : spawnPoints[Random.Range(0, spawnPoints.Count)].transform;
+            var enemySpawnPoint = FindObjectOfType<SpawnPoint>();
+            if (enemySpawnPoint == rt.GetComponent<SpawnPoint>()) rt = defaultSpawnPoint.transform;
+            return rt;
         }
 
         public static List<GameObject> GetAllObjectsOfTypeInScene<T>()
