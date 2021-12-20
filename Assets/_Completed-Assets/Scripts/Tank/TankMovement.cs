@@ -34,6 +34,7 @@ namespace Complete
 
         private void OnEnable ()
         {
+            
             // When the tank is turned on, make sure it's not kinematic.
             m_Rigidbody.isKinematic = false;
 
