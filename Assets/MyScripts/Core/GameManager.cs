@@ -113,7 +113,13 @@ namespace Tanks
               ? defaultSpawnPoint.transform
               : spawnPoints[Random.Range(0, spawnPoints.Count)].transform;
             var enemySpawnPoint = FindObjectOfType<SpawnPoint>();
-            if (enemySpawnPoint == rt.GetComponent<SpawnPoint>()) rt = defaultSpawnPoint.transform;
+            if (enemySpawnPoint == rt.GetComponent<SpawnPoint>())
+            {
+                if (!PhotonNetwork.IsMasterClient)
+                {
+                    rt = defaultSpawnPoint.transform;
+                }
+            } 
             return rt;
         }
 
