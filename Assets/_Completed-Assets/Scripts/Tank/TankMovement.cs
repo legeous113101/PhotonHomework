@@ -28,8 +28,8 @@ namespace Complete
         private void Awake ()
         {
             m_Rigidbody = GetComponent<Rigidbody> ();
-            turrent = gameObject.transform.FindAnyChild<Transform>("TankTurret");
-        }
+            turrent = transform.FindAnyChild<Transform>("TankTurret");
+        } 
 
 
         private void OnEnable ()
@@ -92,9 +92,9 @@ namespace Complete
         private void TurnTurrent()
         {
             if (turrent == null) return;
-            var newRot = new Vector3(0f, turrentTurnValue, 0f);
-            turrent.Rotate(newRot);
-            photonView.RPC("RotateOtherTurrent", RpcTarget.Others,newRot);
+            var rot = new Vector3(0f, turrentTurnValue, 0f);
+            turrent.Rotate(rot);
+            photonView.RPC("RotateOtherTurrent", RpcTarget.Others,rot);
         }
 
         [PunRPC]
